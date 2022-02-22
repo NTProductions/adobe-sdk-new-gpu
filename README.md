@@ -173,10 +173,10 @@ if (!err) {
 * Metal does quite a bit, setting up
     * Names: 
     ```NSString *invert_name = [NSString stringWithCString:"InvertColorKernel" encoding:NSUTF8StringEncoding];```
-    * Properties:```if (!err) {
-				metal_data->invert_pipeline = [device newComputePipelineStateWithFunction:invert_function error:&error];
+    * Properties:
+    
+    ```metal_data->invert_pipeline = [device newComputePipelineStateWithFunction:invert_function error:&error];
 				err = NSError2PFErr(error);
-			}
     ```
     * And the same previous outflag
 
