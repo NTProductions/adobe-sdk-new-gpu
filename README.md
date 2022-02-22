@@ -1,4 +1,4 @@
-# ADOBE-SDK-NEW-GPU
+# Adobe SDK New GPU Setup
 
  _Create an AE/PR plugin which uses CUDA/OpenCL/Metal_
 
@@ -21,7 +21,7 @@
     * Change the version number after "/MSVC/" to match the version on your computer (ex "/MSVC/14.12.25827")
 
 ### Mac
-1. Download and install BOOST to appear like: "/usr/local/Cellar/boost/1.78.0/include"
+1. Download and install <a href="https://www.boost.org/">BOOST</a> to appear like: "/usr/local/Cellar/boost/1.78.0/include"
 2. Open "SDK_Invert_ProcAmp" Project
 3. In the "Project" and "Target" "Build Settings", add the BOOST root path to the property "Header Search Paths" (ex "/usr/local/Cellar/boost_1_78_0")
 
@@ -173,8 +173,7 @@ if (!err) {
 * Metal does quite a bit, setting up
     * Names: 
     ```NSString *invert_name = [NSString stringWithCString:"InvertColorKernel" encoding:NSUTF8StringEncoding];```
-    * Properties:
-    ```if (!err) {
+    * Properties:```if (!err) {
 				metal_data->invert_pipeline = [device newComputePipelineStateWithFunction:invert_function error:&error];
 				err = NSError2PFErr(error);
 			}
