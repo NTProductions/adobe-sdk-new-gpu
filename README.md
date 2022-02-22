@@ -34,7 +34,7 @@
 #### Although most things are already setup, it's important to know what's been added to make the GPU acceleration work, so you may make changes if you wish
 
 ### .h file
-```
+```c++
 // here we are just including important files, depending if you're compiling on Win/Mac/M1
 #if _WIN32
 #include <CL/cl.h>
@@ -52,7 +52,7 @@
 #endif
 ```
 
-```
+```c++
 // this is some metal specific stuff
 #if HAS_METAL
 	/*
@@ -76,7 +76,7 @@
 #endif 
 ```
 
-```
+```c++
 // this is 1 of the two structs defined in the header
 {
 	float mBrightness;
@@ -87,7 +87,7 @@
 ```
 
 ### .cpp file
-```
+```c++
 // if we're using CUDA we need to include this
 #if HAS_CUDA
 	#include <cuda_runtime.h>
@@ -123,7 +123,7 @@ extern void Exposure_CUDA(
 #### If you're compiling for AE, you will want to include this outflag
 ```out_data->out_flags2 |= PF_OutFlag2_SUPPORTS_GPU_RENDER_F32;```
 
-```
+```c++
 // more required metal code (but continuing to note the required stuff)
 #if HAS_METAL
 	PF_Err NSError2PFErr(NSError *inError)
@@ -158,7 +158,7 @@ struct OpenCLGPUData
 ##### This is where we setup any of the 3 types of GPUs
 * CUDA just adds an outflag
 * OpenCL sets up these properties "InvertColorKernel" and "ProcAmp2Kernel"
-```
+```c++
 // You can add or remove these at will based on your project
 if (!err) {
 			cl_gpu_data->invert_kernel = clCreateKernel(program, "InvertColorKernel", &result);
@@ -170,15 +170,17 @@ if (!err) {
 			CL_ERR(result);
 		}
 ```
+
 * Metal does quite a bit, setting up
     * Names: 
-    ```
+    ```c++
     NSString *invert_name = [NSString stringWithCString:"InvertColorKernel" encoding:NSUTF8StringEncoding];
     ```
     * Properties:
-    ```metal_data->invert_pipeline = [device
+    ```c++
+    metal_data->invert_pipeline = [device
     newComputePipelineStateWithFunction:invert_function error:&error];
-				err = NSError2PFErr(error);
+	err = NSError2PFErr(error);
     ```
     * And the same previous outflag
 
@@ -199,7 +201,7 @@ if (!err) {
 ##### Following this are 3 seconds, 1 for OpenCL, 1 for CUDA, and 1 for Metal. There are some important bits here, especially if you plan to modify the properties in any way.
 
 #### OpenCL
-```
+```c++
 // Set the arguments
 // This is setting up the openCL arguments based on the struct data we're using
 // You will want this to be in the right order according to your GPU function argument order
@@ -236,7 +238,7 @@ CL_ERR(clEnqueueNDRangeKernel(
 ##### Compared to the others, this is cake
 ##### Simply call your function (defined in this file and the .cu)
 ##### Be sure to provide the right arguments in the right order
-```
+```c++
 Exposure_CUDA(
 				(const float *)src_mem,
 				(float *)dst_mem,
@@ -251,7 +253,7 @@ _A side note on messing around with these function calls... Be sure you double c
 
 #### Metal
 ##### Overall, the metal code is a bit unfamiliar to me, but here are the important parts
-```
+```c++
 // Params/Arguments Setup
 id<MTLBuffer> procamp_param_buffer = [[device newBufferWithBytes:&procamp_params
 						length:sizeof(ProcAmp2Params)
@@ -280,7 +282,7 @@ MTLSize threadsPerGroup1 = {[metal_dataP->invert_pipeline threadExecutionWidth],
 
 ### CUDA .cu file
 ##### There are 2 functions in here, Exposure_CUDA() and ProcAmp_CUDA(). Let's take a look at Exposure to keep it simple
-```
+```c++
 // this is where all of those previous arguments we setup come in
 // we now call the actual CUDA function "InvertColorKernel" (I didn't change the name to match Exposure)
 void Exposure_CUDA(
@@ -302,7 +304,7 @@ void Exposure_CUDA(
 }
 ```
 #### The good stuff
-```
+```c++
 // this is the function definition
 // each argument is cast to a certain data type using the formatting
 // ((castType)(varName))
@@ -338,7 +340,7 @@ GF_KERNEL_FUNCTION(InvertColorKernel,
 ```
 #### Quickly modifying this function, we can pretend our UI actually is bringing in an exposure value, and do simple, but GPU accelerated functions
 
-```
+```c++
 GF_KERNEL_FUNCTION(InvertColorKernel,
 	((const GF_PTR(float4))(inSrc))
 	((GF_PTR(float4))(outDst)),
