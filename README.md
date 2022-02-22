@@ -175,7 +175,7 @@ if (!err) {
     ```NSString *invert_name = [NSString stringWithCString:"InvertColorKernel" encoding:NSUTF8StringEncoding];```
     * Properties:
     
-    ```metal_data->invert_pipeline = [device newComputePipelineStateWithFunction:invert_function error:&error];
+    ```metal_data->invert_pipeline = [device, newComputePipelineStateWithFunction:invert_function error:&error];
 				err = NSError2PFErr(error);
     ```
     * And the same previous outflag
