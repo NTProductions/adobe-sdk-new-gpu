@@ -275,6 +275,10 @@ MTLSize threadsPerGroup1 = {[metal_dataP->invert_pipeline threadExecutionWidth],
 			[computeEncoder setBuffer:im_metal_buffer offset:0 atIndex:1];
 			[computeEncoder setBuffer:invert_param_buffer offset:0 atIndex:2];
 			[computeEncoder dispatchThreadgroups:numThreadgroups1 threadsPerThreadgroup:threadsPerGroup1];
+
+			// these two commands seem very important for the actual initialising of the calculations
+			[computeEncoder endEncoding];
+			[commandBuffer commit];
 ```
 ##### Once again, with the above code, there are 2 versions of the same functions, one for each of the GPU functions that are run
 ##### Now let's do the fun stuff
